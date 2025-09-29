@@ -1,6 +1,12 @@
+using AuthService.DAL.Context;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+var jwtConfig = builder.Configuration.GetSection("JwtConfig");
+
+var connectionString = builder.Configuration.GetConnectionString("CredentialsDatabase");
+builder.Services.AddDbContext<CredentialsDatabaseContext>(options => options.UseSqlServer(connectionString));
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
