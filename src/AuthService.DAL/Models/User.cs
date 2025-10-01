@@ -8,7 +8,7 @@ public partial class User
 
     public string Username { get; set; } = null!;
 
-    public byte[] HashedPassword { get; set; } = null!;
+    public string HashedPassword { get; set; } = null!;
 
     public DateTime? CreatedAt { get; set; }
 

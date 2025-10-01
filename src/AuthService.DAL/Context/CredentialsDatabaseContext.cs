@@ -68,7 +68,9 @@ public partial class CredentialsDatabaseContext : DbContext
             entity.Property(e => e.Email)
                 .HasMaxLength(50)
                 .IsUnicode(false);
-            entity.Property(e => e.HashedPassword).HasMaxLength(512);
+            entity.Property(e => e.HashedPassword)
+                .HasMaxLength(512)
+                .IsUnicode(false);
             entity.Property(e => e.IsActive).HasDefaultValue(true);
             entity.Property(e => e.Username)
                 .HasMaxLength(50)

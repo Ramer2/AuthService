@@ -94,4 +94,11 @@ public class UserController : ControllerBase
             return Results.Problem(ex.Message);
         }    
     }
+
+    // [HttpPost]
+    // [Route("api/users")]
+    // public Task<IResult> CreateUser([FromBody] CreateUserDto createUserDto, CancellationToken cancellationToken)
+    // {
+    //     
+    // }
 }

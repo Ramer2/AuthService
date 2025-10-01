@@ -23,7 +23,7 @@ CREATE TABLE "User" (
     UserId uniqueidentifier  NOT NULL DEFAULT newid(),
     Email varchar(50)  NOT NULL,
     Username varchar(50)  NOT NULL,
-    HashedPassword varbinary(512)  NOT NULL,
+    HashedPassword varchar(512)  NOT NULL,
     CreatedAt datetime2  NULL DEFAULT sysutcdatetime(),
     IsActive bit  NULL DEFAULT 1,
     CONSTRAINT AK_2 UNIQUE (Email),

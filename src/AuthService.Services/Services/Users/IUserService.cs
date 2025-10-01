@@ -12,4 +12,6 @@ public interface IUserService
     public Task<User> GetUserByUsernameAsync(GetUserByUsernameDto getUserByUsernameDto,CancellationToken cancellationToken);
     
     public Task<User> GetUserByEmailAsync(GetUserByEmailDto getUserByEmailDto, CancellationToken cancellationToken);
+    
+    public Task<User> CreateUserAsync(CreateUserDto createUserDto, CancellationToken cancellationToken);
 }

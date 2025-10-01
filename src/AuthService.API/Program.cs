@@ -3,7 +3,6 @@ using AuthService.Services.Helpers.Options;
 using AuthService.Services.Services.Tokens;
 using AuthService.Services.Services.Users;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Identity.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 
