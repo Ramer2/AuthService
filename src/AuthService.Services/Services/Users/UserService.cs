@@ -33,13 +33,29 @@ public class UserService : IUserService
         return user;
     }
 
-    public Task<User> GetUserByUsernameAsync(GetUserByUsernameDto getUserByUsernameDto, CancellationToken cancellationToken)
+    public async Task<User> GetUserByUsernameAsync(GetUserByUsernameDto getUserByUsernameDto, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        if (getUserByUsernameDto == null || getUserByUsernameDto.Username == null)
+            throw new ArgumentException("Invalid user username.");
+
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == getUserByUsernameDto.Username, cancellationToken);
+
+        if (user == null)
+            throw new FileNotFoundException($"No user found with the username {getUserByUsernameDto.Username}.");
+        
+        return user;
     }
 
-    public Task<User> GetUserByEmailAsync(GetUserByEmailDto getUserByEmailDto, CancellationToken cancellationToken)
+    public async Task<User> GetUserByEmailAsync(GetUserByEmailDto getUserByEmailDto, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        if (getUserByEmailDto == null || getUserByEmailDto.Email == null)
+            throw new ArgumentException("Invalid user username.");
+
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == getUserByEmailDto.Email, cancellationToken);
+
+        if (user == null)
+            throw new FileNotFoundException($"No user found with the enail {getUserByEmailDto.Email}.");
+        
+        return user;
     }
 }

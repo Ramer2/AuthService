@@ -57,12 +57,20 @@ public class UserController : ControllerBase
     {
         try
         {
-            return Results.NoContent();
+            return Results.Ok(await _userService.GetUserByUsernameAsync(getUserByUsernameDto, cancellationToken));
+        }
+        catch (ArgumentException ex)
+        {
+            return Results.BadRequest(ex.Message);
+        }
+        catch (FileNotFoundException ex)
+        {
+            return Results.NotFound(ex.Message);
         }
         catch (Exception ex)
         {
             return Results.Problem(ex.Message);
-        }        
+        }   
     }
 
     [HttpPost]
@@ -71,11 +79,19 @@ public class UserController : ControllerBase
     {
         try
         {
-            return Results.NoContent();
+            return Results.Ok(await _userService.GetUserByEmailAsync(getUserByEmailDto, cancellationToken));
+        }
+        catch (ArgumentException ex)
+        {
+            return Results.BadRequest(ex.Message);
+        }
+        catch (FileNotFoundException ex)
+        {
+            return Results.NotFound(ex.Message);
         }
         catch (Exception ex)
         {
             return Results.Problem(ex.Message);
-        }        
+        }    
     }
 }
