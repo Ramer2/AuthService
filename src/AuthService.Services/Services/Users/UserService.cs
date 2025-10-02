@@ -61,23 +61,66 @@ public class UserService : IUserService
         return user;
     }
 
-    public async Task<User> CreateUserAsync(CreateUserDto createUserDto, CancellationToken cancellationToken)
+    public async Task<UserDto> CreateUserAsync(CreateUserDto createUserDto, CancellationToken cancellationToken)
     {
         if (createUserDto == null)
             throw new ArgumentException("No data was provided.");
-        
         // everything else should be checked by the attributes in the dto (i hope at least)
+
+        var roles = new List<Role>();
+        if (createUserDto.Roles.Count != 0)
+        {
+            foreach (var roleName in createUserDto.Roles)
+            {
+                var role = await _context.Roles.FirstOrDefaultAsync(r => r.RoleName ==  roleName, cancellationToken);
+                if (role == null)
+                    throw new FileNotFoundException($"No role found with the name {roleName}.");
+                
+                roles.Add(role);
+            }
+        }
+
+        var permissions = new List<Permission>();
+        if (!(createUserDto.Permissions == null || createUserDto.Permissions.Count == 0))
+        {
+            foreach (var permissionName in createUserDto.Permissions)
+            {
+                var permission = await _context.Permissions.FirstOrDefaultAsync(p => p.PermissionName == permissionName, cancellationToken);
+                if (permission == null)
+                    throw new FileNotFoundException($"No permission found with the name {permissionName}.");
+                
+                permissions.Add(permission);
+            }            
+        }
+
         var newUser = new User
         {
             Username = createUserDto.Username,
             Email = createUserDto.Email,
+            CreatedAt = DateTime.Now,
+            IsActive = true,
+            Permissions = permissions,
+            Roles = roles
         };
 
         newUser.HashedPassword = _passwordHasher.HashPassword(newUser, createUserDto.Password);
         
         await _context.Users.AddAsync(newUser, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
+
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == createUserDto.Username, cancellationToken);
         
-        return newUser;
+        var newUserDto = new UserDto
+        {
+            UserId = user.UserId.ToString(),
+            Username = user.Username,
+            Email = user.Email,
+            CreatedAt = user.CreatedAt.ToString(),
+            IsActive = user.IsActive.Value,
+            Roles = user.Roles.Select(r => r.RoleName).ToList(),
+            Permissions = user.Permissions.Select(p => p.PermissionName).ToList()
+        };
+        
+        return newUserDto;
     }
 }

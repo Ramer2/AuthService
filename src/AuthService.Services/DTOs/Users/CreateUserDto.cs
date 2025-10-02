@@ -6,15 +6,20 @@ namespace AuthService.Services.DTOs.Users;
 public class CreateUserDto
 {
     [Required]
-    [RegularExpression("@^[a-zA-Z0-9_-]{3,15}$")]
+    [RegularExpression(@"^[a-zA-Z0-9_-]{3,15}$")]
     public string Username { get; set; } = null!;
 
     [Required]
-    [RegularExpression(@"^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")]
+    [RegularExpression(@"[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+")]
     public string Email { get; set; } = null!;
 
     [Required]
     [RegularExpression(@"^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[^\w\d\s:])([^\s]){8,16}$")]
     public string Password { get; set; } = null!;
+
+    [Required]
+    public List<string> Roles { get; set; } = null!;
     
+    public List<string>? Permissions { get; set; }
+
 }

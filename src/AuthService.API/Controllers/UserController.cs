@@ -95,10 +95,25 @@ public class UserController : ControllerBase
         }    
     }
 
-    // [HttpPost]
-    // [Route("api/users")]
-    // public Task<IResult> CreateUser([FromBody] CreateUserDto createUserDto, CancellationToken cancellationToken)
-    // {
-    //     
-    // }
+    [HttpPost]
+    [Route("api/users")]
+    public async Task<IResult> CreateUser([FromBody] CreateUserDto createUserDto, CancellationToken cancellationToken)
+    {
+        try
+        {
+            return Results.Ok(await _userService.CreateUserAsync(createUserDto, cancellationToken));
+        }
+        catch (ArgumentException ex)
+        {
+            return Results.BadRequest(ex.Message);
+        }
+        catch (FileNotFoundException ex)
+        {
+            return Results.NotFound(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            return Results.Problem(ex.Message);
+        }
+    }
 }
