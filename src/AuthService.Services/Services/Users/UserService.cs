@@ -61,7 +61,7 @@ public class UserService : IUserService
         return user;
     }
 
-    public async Task<UserDto> CreateUserAsync(CreateUserDto createUserDto, CancellationToken cancellationToken)
+    public async Task<UserDto> CreateUserCredentialsAsync(CreateUserDto createUserDto, CancellationToken cancellationToken)
     {
         if (createUserDto == null)
             throw new ArgumentException("No data was provided.");
