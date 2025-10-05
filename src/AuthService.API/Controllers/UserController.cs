@@ -97,11 +97,11 @@ public class UserController : ControllerBase
 
     [HttpPost]
     [Route("api/users")]
-    public async Task<IResult> CreateUser([FromBody] CreateUserDto createUserDto, CancellationToken cancellationToken)
+    public async Task<IResult> CreateUserCredentials([FromBody] CreateUserDto createUserDto, CancellationToken cancellationToken)
     {
         try
         {
-            return Results.Ok(await _userService.CreateUserAsync(createUserDto, cancellationToken));
+            return Results.Ok(await _userService.CreateUserCredentialsAsync(createUserDto, cancellationToken));
         }
         catch (ArgumentException ex)
         {
