@@ -1,5 +1,6 @@
 ﻿using AuthService.Services.DTOs.Users;
 using AuthService.Services.Services.Users;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AuthService.API.Controllers;
@@ -15,8 +16,9 @@ public class UserController : ControllerBase
         _userService = userService;
     }
     
+    [Authorize(Policy = "AdminOrCanViewUsers")]
     [HttpGet]
-    [Route("api/users")]
+    [Route("/api/users")]
     public async Task<IResult> GetAllUsers(CancellationToken cancellationToken)
     {
         try
@@ -30,7 +32,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPost]
-    [Route("api/users/by-id")]
+    [Route("/api/users/by-id")]
     public async Task<IResult> GetUserById([FromBody] GetUserByIdDto getUserByIdDto, CancellationToken cancellationToken)
     {
         try
@@ -52,7 +54,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPost]
-    [Route("api/users/by-username")]
+    [Route("/api/users/by-username")]
     public async Task<IResult> GetUserByUsername([FromBody] GetUserByUsernameDto getUserByUsernameDto, CancellationToken cancellationToken)
     {
         try
@@ -74,7 +76,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPost]
-    [Route("api/users/by-email")]
+    [Route("/api/users/by-email")]
     public async Task<IResult> GetUserByEmail([FromBody] GetUserByEmailDto getUserByEmailDto, CancellationToken cancellationToken)
     {
         try
@@ -95,8 +97,9 @@ public class UserController : ControllerBase
         }    
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPost]
-    [Route("api/users")]
+    [Route("/api/users")]
     public async Task<IResult> CreateUserCredentials([FromBody] CreateUserDto createUserDto, CancellationToken cancellationToken)
     {
         try

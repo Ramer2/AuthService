@@ -1,8 +1,11 @@
+using System.Security.Cryptography;
 using AuthService.DAL.Context;
 using AuthService.Services.Helpers.Options;
 using AuthService.Services.Services.Tokens;
 using AuthService.Services.Services.Users;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,7 +16,35 @@ builder.Services.AddDbContext<CredentialsDatabaseContext>(options => options.Use
 
 builder.Services.Configure<JwtOptions>(jwtConfig);
 
-builder.Services.AddSingleton<ITokenService, TokenService>();
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(o =>
+{
+    var rsa = RSA.Create();
+    rsa.ImportFromPem(File.ReadAllText(jwtConfig["PublicKeyPath"]));
+
+    o.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuerSigningKey = true,
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidIssuer = jwtConfig["Issuer"],
+        ValidAudience = jwtConfig["Audience"],
+        IssuerSigningKey = new RsaSecurityKey(rsa),
+        ClockSkew = TimeSpan.FromMinutes(10)
+    };
+});
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminOrCanViewUsers", policy =>
+        policy.RequireAssertion(context =>
+            context.User.IsInRole("Admin") || 
+            context.User.HasClaim("permission", "ViewUsers")
+        ));
+});
+
+
+builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services.AddControllers();
@@ -30,8 +61,12 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
 
 app.Run();
+
+// TODO: fix getting roles and permissions
+// TODO: fix duplicate email/username exception crashing the program

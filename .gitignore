@@ -485,3 +485,6 @@ $RECYCLE.BIN/
 
 # Exclude dev appsettings.json
 appsettings.Development.json
+
+# Exclude keys folder
+keys
