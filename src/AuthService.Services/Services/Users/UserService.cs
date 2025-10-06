@@ -16,49 +16,104 @@ public class UserService : IUserService
         _context = context;
     }
 
-
-    public async Task<List<User>> GetAllUsersAsync(CancellationToken cancellationToken)
+    public async Task<List<UserDto>> GetAllUsersAsync(CancellationToken cancellationToken)
     {
-        return await _context.Users.ToListAsync(cancellationToken);
+        var result = new List<UserDto>();
+        var users =  await _context.Users
+            .Include(u => u.Roles)
+            .Include(u => u.Permissions)
+            .ToListAsync(cancellationToken);
+        
+        foreach (var user in users)
+        {
+            result.Add(new UserDto
+            {
+                UserId = user.UserId.ToString(),
+                Username = user.Username,
+                Email = user.Email,
+                IsActive = user.IsActive,
+                CreatedAt = user.CreatedAt.ToString(),
+                Roles = user.Roles.Select(r => r.RoleName).ToList(),
+                Permissions = user.Permissions.Select(p => p.PermissionName).ToList(),
+            });
+        }
+        
+        return result;
     }
 
-    public async Task<User> GetUserByIdAsync(GetUserByIdDto getUserByIdDto, CancellationToken cancellationToken)
+    public async Task<UserDto> GetUserByIdAsync(GetUserByIdDto getUserByIdDto, CancellationToken cancellationToken)
     {
         if (getUserByIdDto == null || getUserByIdDto.UserId == null)
             throw new ArgumentException("Invalid user id.");
 
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.UserId.ToString() == getUserByIdDto.UserId, cancellationToken);
+        var user = await _context.Users
+            .Include(u => u.Roles)
+            .Include(u => u.Permissions)
+            .FirstOrDefaultAsync(u => u.UserId.ToString() == getUserByIdDto.UserId, cancellationToken);
 
         if (user == null)
             throw new FileNotFoundException($"No user found with the id {getUserByIdDto.UserId}.");
         
-        return user;
+        return new UserDto
+        {
+            UserId = user.UserId.ToString(),
+            Username = user.Username,
+            Email = user.Email,
+            IsActive = user.IsActive,
+            CreatedAt = user.CreatedAt.ToString(),
+            Roles = user.Roles.Select(r => r.RoleName).ToList(),
+            Permissions = user.Permissions.Select(p => p.PermissionName).ToList(),
+        };
     }
 
-    public async Task<User> GetUserByUsernameAsync(GetUserByUsernameDto getUserByUsernameDto, CancellationToken cancellationToken)
+    public async Task<UserDto> GetUserByUsernameAsync(GetUserByUsernameDto getUserByUsernameDto, CancellationToken cancellationToken)
     {
         if (getUserByUsernameDto == null || getUserByUsernameDto.Username == null)
             throw new ArgumentException("Invalid user username.");
 
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == getUserByUsernameDto.Username, cancellationToken);
+        var user = await _context.Users
+            .Include(u => u.Roles)
+            .Include(u => u.Permissions)
+            .FirstOrDefaultAsync(u => u.Username == getUserByUsernameDto.Username, cancellationToken);
 
         if (user == null)
             throw new FileNotFoundException($"No user found with the username {getUserByUsernameDto.Username}.");
         
-        return user;
+        return new UserDto
+        {
+            UserId = user.UserId.ToString(),
+            Username = user.Username,
+            Email = user.Email,
+            IsActive = user.IsActive,
+            CreatedAt = user.CreatedAt.ToString(),
+            Roles = user.Roles.Select(r => r.RoleName).ToList(),
+            Permissions = user.Permissions.Select(p => p.PermissionName).ToList(),
+        };
     }
 
-    public async Task<User> GetUserByEmailAsync(GetUserByEmailDto getUserByEmailDto, CancellationToken cancellationToken)
+    public async Task<UserDto> GetUserByEmailAsync(GetUserByEmailDto getUserByEmailDto, CancellationToken cancellationToken)
     {
         if (getUserByEmailDto == null || getUserByEmailDto.Email == null)
             throw new ArgumentException("Invalid user username.");
 
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == getUserByEmailDto.Email, cancellationToken);
+        var user = await _context.Users
+            .Include(u => u.Roles)
+            .Include(u => u.Permissions)
+            .FirstOrDefaultAsync(u => u.Email == getUserByEmailDto.Email, cancellationToken);
 
         if (user == null)
             throw new FileNotFoundException($"No user found with the enail {getUserByEmailDto.Email}.");
         
-        return user;
+        return new UserDto
+        {
+            UserId = user.UserId.ToString(),
+            Username = user.Username,
+            Email = user.Email,
+            IsActive = user.IsActive,
+            CreatedAt = user.CreatedAt.ToString(),
+            Roles = user.Roles.Select(r => r.RoleName).ToList(),
+            Permissions = user.Permissions.Select(p => p.PermissionName).ToList(),
+        };
     }
 
     public async Task<UserDto> CreateUserCredentialsAsync(CreateUserDto createUserDto, CancellationToken cancellationToken)

@@ -10,7 +10,7 @@ public class UserDto
 
     public string CreatedAt { get; set; } = null!;
 
-    public bool IsActive { get; set; }
+    public bool? IsActive { get; set; }
 
     public List<string> Roles { get; set; } = new();
 

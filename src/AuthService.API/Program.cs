@@ -68,5 +68,4 @@ app.MapControllers();
 
 app.Run();
 
-// TODO: fix getting roles and permissions
 // TODO: fix duplicate email/username exception crashing the program

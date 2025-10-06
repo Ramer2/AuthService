@@ -25,7 +25,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost]
-    [Route("/api/login")]
+    [Route("/api/auth")]
     public async Task<IResult> Auth(LoginUserDto loginUserDto, CancellationToken cancellationToken)
     {
         try
