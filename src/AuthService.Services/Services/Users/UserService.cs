@@ -1,7 +1,9 @@
-﻿using AuthService.DAL.Context;
+﻿using System.Data;
+using AuthService.DAL.Context;
 using AuthService.DAL.Models;
 using AuthService.Services.DTOs.Users;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 namespace AuthService.Services.Services.Users;
@@ -120,6 +122,13 @@ public class UserService : IUserService
     {
         if (createUserDto == null)
             throw new ArgumentException("No data was provided.");
+        
+        var emailUsernameCheck = await _context.Users
+            .FirstOrDefaultAsync(u => u.Email == createUserDto.Email || u.Username == createUserDto.Username, cancellationToken);
+        
+        if (emailUsernameCheck != null)
+            throw new DuplicateNameException("User with this data already exists.");
+        
         // everything else should be checked by the attributes in the dto (i hope at least)
 
         var roles = new List<Role>();

@@ -67,5 +67,3 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
-
-// TODO: fix duplicate email/username exception crashing the program

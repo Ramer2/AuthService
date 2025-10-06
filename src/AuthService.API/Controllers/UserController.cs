@@ -1,7 +1,10 @@
-﻿using AuthService.Services.DTOs.Users;
+﻿using System.Data;
+using AuthService.Services.DTOs.Users;
 using AuthService.Services.Services.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 
 namespace AuthService.API.Controllers;
 
@@ -16,7 +19,7 @@ public class UserController : ControllerBase
         _userService = userService;
     }
     
-    [Authorize(Policy = "AdminOrCanViewUsers")]
+    // [Authorize(Policy = "AdminOrCanViewUsers")]
     [HttpGet]
     [Route("/api/users")]
     public async Task<IResult> GetAllUsers(CancellationToken cancellationToken)
@@ -97,7 +100,7 @@ public class UserController : ControllerBase
         }    
     }
 
-    [Authorize(Roles = "Admin")]
+    // [Authorize(Roles = "Admin")]
     [HttpPost]
     [Route("/api/users")]
     public async Task<IResult> CreateUserCredentials([FromBody] CreateUserDto createUserDto, CancellationToken cancellationToken)
@@ -113,6 +116,10 @@ public class UserController : ControllerBase
         catch (FileNotFoundException ex)
         {
             return Results.NotFound(ex.Message);
+        }
+        catch (DuplicateNameException ex)
+        {
+            return Results.BadRequest(ex.Message);
         }
         catch (Exception ex)
         {
